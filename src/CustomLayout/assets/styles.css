@@ -4,6 +4,7 @@
 }
 
 .custom-layout .header {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -20,4 +21,17 @@
 .custom-layout .layout-container {
   position: relative;
   height: calc(100vh - 50px);
+}
+
+.custom-layout .widgets {
+  z-index: 99999;
+}
+
+.custom-layout .widgets .list {
+  position: absolute;
+  right: 0;
+  z-index: 99999;
+  background-color: #c4c4c4;
+  width: 100px;
+  padding: 2px;
 }

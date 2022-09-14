@@ -1,8 +1,8 @@
-import React from "react";
-import RootLayout from "./CustomLayout/components/RootLayout";
+import React from 'react'
+import CustomLayout from './CustomLayout'
 
 function App() {
-  return <RootLayout />;
+  return <CustomLayout />
 }
 
-export default App;
+export default App
