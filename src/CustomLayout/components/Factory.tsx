@@ -1,5 +1,5 @@
-import { TabNode } from 'flexlayout-react'
 import React, { memo } from 'react'
+import { TabNode } from 'flexlayout-react'
 import { COMPONENT_KEYS } from '../constants'
 import Component1 from './Component1'
 import Component2 from './Component2'
@@ -10,8 +10,6 @@ interface Props {
 
 function Factory({ node }: Props) {
   const component = node.getComponent()
-  console.log('component', component)
-  // const {id = ''} = node.toJson()
 
   if (component === COMPONENT_KEYS.component1) {
     return <Component1 />

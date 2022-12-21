@@ -1,16 +1,17 @@
 .custom-layout {
   height: 100vh;
   width: 100vw;
+  background-color: #121212;
+  color: #ffffff;
+  font-size: 14px;
 }
 
 .custom-layout .header {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  text-align: center;
   height: 50px;
-  box-shadow: 0px 0px 4px -1px grey;
-  padding: 0 2rem;
+  border-bottom: 1px solid #323232;
+  font-size: 30px;
 }
 
 .custom-layout .header span {
@@ -18,20 +19,74 @@
   font-weight: 700;
 }
 
-.custom-layout .layout-container {
+.custom-layout .tools-bar {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 5px 0;
+  border-bottom: 1px solid #323232;
+}
+
+.custom-layout .tools-bar .tabs {
+  display: flex;
+  width: 100%;
+}
+
+.custom-layout .tools-bar .widgets {
   position: relative;
-  height: calc(100vh - 50px);
-}
-
-.custom-layout .widgets {
+  background-color: #323232;
+  width: 300px;
   z-index: 99999;
+  cursor: pointer;
+  padding: 2px 7px;
 }
 
-.custom-layout .widgets .list {
+.custom-layout .tools-bar .widgets .list {
   position: absolute;
   right: 0;
   z-index: 99999;
-  background-color: #c4c4c4;
-  width: 100px;
-  padding: 2px;
+  background-color: #757575;
+  width: 100%;
+  padding: 0px;
+  top: 100%;
+}
+
+.custom-layout .tools-bar .widgets .list .widget {
+  padding: 3px 7px;
+}
+
+.custom-layout .tools-bar .widgets .list .widget:hover {
+  background-color: #4d4d4d;
+}
+
+.custom-layout .tabs .tab {
+  padding: 3px 7px;
+  margin-left: 5px;
+  background-color: #323232;
+  max-width: 100px;
+  width: 100%;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.custom-layout .tabs .tab.active {
+  background-color: #757575;
+}
+
+.custom-layout .tabs .tab:hover {
+  background-color: #4d4d4d;
+}
+
+.custom-layout .tabs .tab.add-layout {
+  display: flex;
+  align-items: center;
+}
+
+.custom-layout .layout-container {
+  position: relative;
+  height: calc(100vh - 87px);
+}
+
+.custom-layout .flexlayout__tab_toolbar_button {
+  color: #ffffff;
 }

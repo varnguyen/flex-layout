@@ -1,26 +1,43 @@
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { Action, Actions, Layout, Model, TabNode } from 'flexlayout-react'
 import { COMPONENTS, DEFAULT_JSON_MODEL, WIDGETS } from './constants'
-import { BiLink } from 'react-icons/bi'
-
-import 'flexlayout-react/style/light.css'
+import { LayoutInfo } from './types'
+import { BiPlus, BiLink } from 'react-icons/bi'
+import { MdOutlineClose, MdFullscreen, MdFullscreenExit, MdOutlineKeyboardArrowDown } from 'react-icons/md'
+import 'flexlayout-react/style/dark.css'
 import './assets/styles.css'
+import Factory from './components/Factory'
+
+const defaultLayouts = [
+  {
+    name: 'Tab 1',
+    layoutId: 1,
+    model: DEFAULT_JSON_MODEL
+  }
+]
 
 function CustomLayout() {
   const layoutRef = useRef<any>()
   const [rawModel, setRawModel] = useState<Model>()
   const [showWidgets, setShowWidgets] = useState<boolean>(false)
+  const [layouts, setLayouts] = useState<LayoutInfo[]>(defaultLayouts)
+  const [layoutActived, setLayoutActived] = useState<LayoutInfo>()
 
   useEffect(() => {
-    setRawModel(Model.fromJson(DEFAULT_JSON_MODEL))
+    setLayoutActived({
+      name: 'Tab 1',
+      layoutId: 1,
+      model: DEFAULT_JSON_MODEL
+    })
   }, [])
 
-  const factory = (node: TabNode) => {
-    var component = node.getComponent()
-    if (component === 'text') {
-      return <div className="panel">Panel {node.getName()}</div>
+  useEffect(() => {
+    if (!layoutActived) {
+      return
     }
-  }
+
+    setRawModel(Model.fromJson(layoutActived.model))
+  }, [layoutActived])
 
   const onAction = (action: Action) => {
     const tabNode = rawModel ? rawModel?.getActiveTabset()?.getSelectedNode()?.getId() : ''
@@ -38,8 +55,20 @@ function CustomLayout() {
   }
 
   const onModelChange = (model: Model) => {
-    console.log('onModelChange', model)
-    setRawModel(model)
+    const layoutModel = model.toJson()
+
+    if (!layoutActived || !layoutModel) {
+      return
+    }
+
+    const index = layouts.findIndex((layout) => layout.layoutId === layoutActived.layoutId)
+    if (index < 0) {
+      return
+    }
+
+    layouts[index].model = layoutModel
+
+    setLayouts([...layouts])
   }
 
   const onAddWidget = (name: string) => {
@@ -48,8 +77,8 @@ function CustomLayout() {
       return
     }
 
-    const titleDragAndDrop = `Di chuột đến khu vực cần thêm và thả\n${name}`
-    layout.addTabWithDragAndDrop(titleDragAndDrop, COMPONENTS[name])
+    const titleDragAndDrop = `Hover over the area to add and release\n${name}\nPress [ESC] to cancel`
+    layout.addTabWithDragAndDropIndirect(titleDragAndDrop, COMPONENTS[name]) //addTabWithDragAndDrop
   }
 
   const iconFactory = useCallback((node: TabNode) => {
@@ -72,16 +101,52 @@ function CustomLayout() {
     }
   }
 
+  const onCreateLayout = () => {
+    setLayouts([
+      ...layouts,
+      {
+        name: `Tab ${layouts.length + 1}`,
+        layoutId: layouts.length + 1,
+        model: DEFAULT_JSON_MODEL
+      }
+    ])
+  }
+
+  const onActiveLayout = (layout: LayoutInfo) => {
+    if (layout.layoutId === layoutActived?.layoutId) {
+      return
+    }
+
+    setLayoutActived(layout)
+  }
+
   return (
     <div className="custom-layout">
-      <div className="header">
-        <span>Flex Layout Example</span>
-        <div className="widgets">
-          <span onClick={() => setShowWidgets(!showWidgets)}>Widgets</span>
+      <div className="header">Flex Layout Example</div>
+      <div className="tools-bar">
+        <div className="tabs">
+          {layouts.map((layout: LayoutInfo) => (
+            <div
+              key={layout.layoutId}
+              className={`tab ${layout.layoutId === layoutActived?.layoutId ? 'active' : ''}`}
+              onClick={() => onActiveLayout(layout)}
+            >
+              {layout.name}
+            </div>
+          ))}
+          {layouts.length < 5 && (
+            <div className="tab add-layout" onClick={onCreateLayout}>
+              <BiPlus />
+              Add layout
+            </div>
+          )}
+        </div>
+        <div className="widgets" onClick={() => setShowWidgets(!showWidgets)}>
+          List widgets
           {showWidgets && (
             <div className="list">
               {WIDGETS.map((item, index) => (
-                <div key={index} onClick={() => onAddWidget(item.name)}>
+                <div className="widget" key={index} onClick={() => onAddWidget(item.name)}>
                   {item.title}
                 </div>
               ))}
@@ -89,20 +154,26 @@ function CustomLayout() {
           )}
         </div>
       </div>
+
       {!!rawModel && (
         <div className="layout-container">
           <Layout
             ref={layoutRef}
             model={rawModel}
             icons={{
-              close: () => <div title="Close">x</div>,
-              maximize: () => <div title="Full">Full</div>,
-              restore: () => <div title="Small">Small</div>,
+              close: () => <MdOutlineClose title="" />,
+              maximize: () => <MdFullscreen />,
+              restore: () => <MdFullscreenExit />,
               more: (_node, hiddenTabs) => {
-                return <div title="Hidden Tabs">Tabs: {hiddenTabs.length}</div>
+                return (
+                  <div>
+                    <MdOutlineKeyboardArrowDown title="" />
+                    {hiddenTabs.length}
+                  </div>
+                )
               }
             }}
-            factory={factory}
+            factory={(node) => <Factory node={node} />}
             iconFactory={iconFactory}
             titleFactory={titleFactory}
             onAction={onAction}

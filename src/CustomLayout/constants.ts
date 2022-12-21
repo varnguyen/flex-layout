@@ -8,11 +8,11 @@ export enum COMPONENT_KEYS {
 export const COMPONENTS: Record<string, any> = {
   [COMPONENT_KEYS.component1]: {
     component: COMPONENT_KEYS.component1,
-    name: 'component1'
+    name: 'Comp 1'
   },
   [COMPONENT_KEYS.component2]: {
     component: COMPONENT_KEYS.component2,
-    name: 'component2'
+    name: 'Comp 2'
   }
 }
 
